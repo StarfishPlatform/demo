@@ -5,9 +5,9 @@ from subprocess import call
 
 from flask import Flask, render_template, request, redirect, url_for
 
-os.environ['STARFISH_API_URL'] = os.environ.get('STARFISH_API_URL', 'http://localhost:3000')
-
 BASE_SERVICE_ID = 'customer-crm'
+
+os.environ.setdefault('STARFISH_API_URL', 'http://localhost:3000')
 
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_pyfile('config.py', silent=True)
@@ -39,7 +39,7 @@ def run_filter(field, value, input, output, is_search=False, suffix=''):
         service_id += '-' + suffix
 
     env = os.environ.copy()
-    env['SERVICE_ID'] = service_id
+    env['STARFISH_SERVICE_ID'] = service_id
 
     p = ['python3', './scripts/demo_filter.py',
          '--field', field, '--value', value,

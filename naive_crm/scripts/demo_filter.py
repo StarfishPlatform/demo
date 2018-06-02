@@ -1,16 +1,14 @@
 import json
-import os
-import time
-from itertools import chain
 
 import click
 from starfish_shell import ShellFactory
 
-STARFISH_API_URL = os.environ.get('STARFISH_API_URL', 'http://localhost:3000')
-SERVICE_ID = os.environ.get('SERVICE_ID', 'UNKNOWN_SERVICE')
-RUN_ID = os.environ.get('RUN_ID', str(int(time.time())))
 
-FACTORY = ShellFactory.from_env()
+def profile_matcher(profile):
+    return profile['login']['username']
+
+
+FACTORY = ShellFactory.from_env(matcher=profile_matcher)
 
 
 def get_field(field, jline):
@@ -21,9 +19,9 @@ def get_field(field, jline):
 
 def filter_profiles(profiles, field, value, is_search):
     for profile in profiles:
-        field = get_field(field, profile)
+        current_value = get_field(field, profile)
 
-        if (is_search and value in field) or (value == field):
+        if (is_search and value in current_value) or (current_value == value):
             yield profile
 
 
@@ -43,7 +41,7 @@ def demo_filter(field, search, value, files, output):
             shelled = FACTORY.shell_iterator(jlines, source=filename)
 
             profiles = filter_profiles(shelled, field, value, is_search=search)
-            filtered = chain(filtered, profiles)
+            filtered += list(profiles)
 
     with open(output, 'w') as out:
         shelled = FACTORY.shell_iterator(filtered, destination=output)

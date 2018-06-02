@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form method="post" action="/filter">
+    <div class="form-row align-items-center">
+        <div class="col-auto">
+            <input type="text" class="form-control" placeholder="Prénom" name="firstname"
+                   {% if params.firstname %}value="{{params.firstname}}" {% endif %}>
+        </div>
+
+        <div class="col-auto">
+            <select class="form-control" name="gender">
+                <option value=""
+                        {% if params.gender != "female" and params.gender !="male" %}
+                        selected
+                        {% endif %}
+                >Tous</option>
+                <option value="male"
+                 {% if params.gender == "male" %}
+                selected
+                {% endif %}
+                >Homme</option>
+
+                <option value="female"
+                        {% if params.gender == "female" %}
+                selected
+                {% endif %}
+                >Femme</option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary mb-2">Filtrer</button>
+        </div>
+    </div>
+</form>
+
+
+<div class="card-columns">
+    {% for profile in profiles %}
+    <div class="card" style="width: 18rem;">
+        <img class="card-img-top" src="{{ profile.picture.large }}" alt="user image">
+        <div class="card-body">
+            <h5 class="card-title">
+            {{ profile.name.first }}
+        {{ profile.name.last }}
+            </h5>
+            <!--
+            <p class="card-text">
+            </p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+            -->
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
